@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: wms_route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+  ## 前端项目 /api
+  application:
+    name: wms_gateway
+server:
+  port: 88

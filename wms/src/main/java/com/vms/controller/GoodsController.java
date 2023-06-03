@@ -11,6 +11,9 @@ import com.vms.entity.Storage;
 import com.vms.service.GoodsService;
 import com.vms.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,12 +37,14 @@ public class GoodsController {
 
     //修改
     @PostMapping("/mod")
+    @CacheEvict(value = "Goods",key = "'listPc'")
     public boolean mod(@RequestBody Goods goods){
         return goodsService.updateById(goods);
     }
 
     //新增
     @PostMapping("/save")
+    @CacheEvict(value = "Goods",key = "'listPc'")
     public Result save(@RequestBody Goods goods){
         return goodsService.save(goods)?Result.success(null,0):Result.fail();
     }
@@ -50,22 +55,26 @@ public class GoodsController {
     }
     //新增或修改
     @PostMapping("/saveOrMod")
+    @CacheEvict(value = "Goods",key = "'listPc'")
     public boolean saveOrMod(@RequestBody Goods goods){
         return goodsService.saveOrUpdate(goods);
     }
     //删除
     @GetMapping("/delete")
+    @CacheEvict(value = "Goods",key = "'listPc'")
     public Result delete(Integer id){
         return goodsService.removeById(id)?Result.success(null,0):Result.fail();
     }
 
     //更新
     @PostMapping("/update")
+    @CacheEvict(value = "Goods",key = "'listPc'")
     public Result update(@RequestBody Goods goods){
         return goodsService.updateById(goods)?Result.success(null,0):Result.fail();
     }
 
     @PostMapping("/listPage")
+    @Cacheable(value = "goods",key = "#root.method.name",sync = true)
     public Result listPc(@RequestBody QueryPageParam query){
         HashMap param = query.getParam();
         String name =(String) param.get("name");

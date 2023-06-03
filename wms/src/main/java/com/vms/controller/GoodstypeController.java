@@ -13,6 +13,8 @@ import com.vms.entity.Menu;
 import com.vms.entity.user;
 import com.vms.service.GoodstypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -35,12 +37,14 @@ public class GoodstypeController {
 
     //修改
     @PostMapping("/mod")
+    @CacheEvict(value = "goodstype",key = "'listPc'")
     public boolean mod(@RequestBody Goodstype goodstype){
         return goodstypeService.updateById(goodstype);
     }
 
     //新增
     @PostMapping("/save")
+    @CacheEvict(value = "goodstype",key = "'listPc'")
     public Result save(@RequestBody Goodstype goodstype){
         return goodstypeService.save(goodstype)?Result.success(null,0):Result.fail();
     }
@@ -48,22 +52,26 @@ public class GoodstypeController {
 
     //新增或修改
     @PostMapping("/saveOrMod")
+    @CacheEvict(value = "goodstype",key = "'listPc'")
     public boolean saveOrMod(@RequestBody Goodstype goodstype){
         return goodstypeService.saveOrUpdate(goodstype);
     }
     //删除
     @GetMapping("/delete")
+    @CacheEvict(value = "goodstype",key = "'listPc'")
     public Result delete(Integer id){
         return goodstypeService.removeById(id)?Result.success(null,0):Result.fail();
     }
 
     //更新
     @PostMapping("/update")
+    @CacheEvict(value = "goodstype",key = "'listPc'")
     public Result update(@RequestBody Goodstype goodstype){
         return goodstypeService.updateById(goodstype)?Result.success(null,0):Result.fail();
     }
 
     @PostMapping("/listPage")
+    @Cacheable(value = "goodstype",key = "#root.method.name",sync = true)
     public Result listPc(@RequestBody QueryPageParam query){
         HashMap param = query.getParam();
         String name =(String) param.get("name");

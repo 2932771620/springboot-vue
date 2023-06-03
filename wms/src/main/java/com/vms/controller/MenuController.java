@@ -6,6 +6,7 @@ import com.vms.entity.Menu;
 import com.vms.entity.user;
 import com.vms.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -30,6 +31,7 @@ public class MenuController {
     private MenuService menuService;
 
     @GetMapping("/List")
+    @Cacheable(value = "menu",key = "#root.method.name",sync = true)
     public Result findByNo(@RequestParam String roleId){
         List<Menu> list = menuService.lambdaQuery().like(Menu::getMenuright,roleId).list();
         return list.size()>0?Result.success(list,list.size()):Result.fail();

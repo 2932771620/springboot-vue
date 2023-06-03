@@ -14,6 +14,8 @@ import com.vms.entity.RecordRes;
 import com.vms.service.GoodsService;
 import com.vms.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +45,7 @@ public class RecordController {
 
     //新增
     @PostMapping("/save")
+    @CacheEvict(value = "menu",key = "'listPc'")
     public Result save(@RequestBody Record record){
         Goods goods = goodsService.getById(record.getGoods());
         Integer count = record.getCount();
@@ -60,6 +63,7 @@ public class RecordController {
 
 
     @PostMapping("/listPage")
+    @Cacheable(value = "menu",key = "#root.method.name",sync = true)
     public Result listPc(@RequestBody QueryPageParam query){
         HashMap param = query.getParam();
         String name =(String) param.get("name");
